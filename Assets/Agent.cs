@@ -79,12 +79,19 @@ public class Agent : MonoBehaviour
             Debug.Log("ESTOY EN SHOOT");
             if (life > 0)
             {
-                if (bullets > 0) {
+                if (target != null)
+                {
+                    transform.LookAt(target); 
+                }
+
+                if (bullets > 0)
+                {
                     var bul = Instantiate(bullet);
                     bul.transform.position = transform.position + transform.forward;
                     bul.transform.forward = transform.forward;
                     SendInputToFSM(Conditions.MOVE);
                 }
+
                 else
                 {
                     myWeapon.GetComponent<Renderer>().material.color = Color.red;
@@ -161,7 +168,7 @@ public class Agent : MonoBehaviour
     public IEnumerator Recharge()
     {
         yield return new WaitForSeconds(1.5f);
-        bullets += charger;
+        bullets = charger;
     }
 
     public IEnumerator MoveToOther()
