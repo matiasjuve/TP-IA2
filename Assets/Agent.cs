@@ -9,12 +9,12 @@ public class Agent : MonoBehaviour
     public enum Conditions { MOVE, SHOOT, RECHARGE, RESPAWN }
     private EventFSM<Conditions> _myFsm;
     private Rigidbody _myRb;
-    public Renderer _myRen;
 
     public string user;
     public int bullets = 3;
     public int charger = 3;
     public int life = 2;
+    public int maxLife;
     public float speed;
     public GameObject myWeapon;
     public Bullet bullet;
@@ -22,12 +22,16 @@ public class Agent : MonoBehaviour
     public float range;
     public int angle;
     public LayerMask visibles = ~0;
-    public Agent target;
+    private Agent target;
+    private List<Agent> enemysOnRange;
+    public List<Transform> spawnPoints;
 
     private void Awake()
     {
         _myRb = gameObject.GetComponent<Rigidbody>();
         DisplayName(tag);
+        bullets = charger;
+        life = maxLife;
 
         //PARTE 1: SETEO INICIAL
 
@@ -62,17 +66,22 @@ public class Agent : MonoBehaviour
         //Move
         move.OnUpdate += () =>
         {
+            Debug.Log("ESTOY EN MOVE");
+            if (life > 0) MoveToOther(Conditions.SHOOT, 2);
+            else SendInputToFSM(Conditions.RESPAWN);
             //movimiento de cada personaje.
 
-           /*if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
-                SendInputToFSM(Conditions.MOVE);
-            else if (Input.GetKeyDown(KeyCode.Space))
-                SendInputToFSM(Conditions.SHOOT);*/
+            /*if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+                 SendInputToFSM(Conditions.MOVE);
+             else if (Input.GetKeyDown(KeyCode.Space))
+                 SendInputToFSM(Conditions.SHOOT);*/
         };
 
         //Shoot
         shoot.OnUpdate += () =>
         {
+
+            Debug.Log("ESTOY EN SHOOT");
             if (life > 0)
             {
                 if (bullets > 0) {
@@ -105,10 +114,22 @@ public class Agent : MonoBehaviour
 
         recharge.OnUpdate += () =>
         {
+            Debug.Log("ESTOY EN RECARGA");
             if (life <= 0)
             {
                 SendInputToFSM(Conditions.RESPAWN);
             }
+        };
+
+        //Respawn
+        respawn.OnEnter += x =>
+        {
+            transform.position = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+            bullets = charger;
+            life = maxLife;
+            target = null;
+            myWeapon.GetComponent<Renderer>().material.color = Color.green;
+            SendInputToFSM(Conditions.MOVE);
         };
 
         //con todo ya creado, creo la FSM y le asigno el primer estado
@@ -124,7 +145,7 @@ public class Agent : MonoBehaviour
     {
         _myFsm.Update();
 
-        if(target != null) IsInSight(target.transform);
+        target = SetTarget(enemysOnRange);
     }
 
     private void FixedUpdate()
@@ -146,6 +167,12 @@ public class Agent : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         bullets += charger;
+    }
+
+    public IEnumerator MoveToOther(Conditions condit, int time)
+    {
+        yield return new WaitForSeconds(time);
+        SendInputToFSM(condit);
     }
 
     public bool IsInSight(Transform target)
@@ -184,7 +211,7 @@ public class Agent : MonoBehaviour
         return true;
     }
 
-    /*public Agent SetTarget(List<Agent> enemys)
+    public Agent SetTarget(List<Agent> enemys)
     {
         if (target == null)
         {
@@ -193,8 +220,22 @@ public class Agent : MonoBehaviour
                 if (IsInSight(item.transform)) return item;
             }
         }
+        return null;
+    }
 
-        else return default(Agent);
-    }*/
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.GetComponent<Agent>())
+        {
+            enemysOnRange.Add(other.GetComponent<Agent>());
+        }
+    }
 
+    public void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.GetComponent<Agent>())
+        {
+            enemysOnRange.Remove(other.GetComponent<Agent>());
+        }
+    }
 }

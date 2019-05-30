@@ -1662,11 +1662,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e1a8eac93ddf640a8289be4983234b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _myRen: {fileID: 0}
   user: 
   bullets: 3
   charger: 3
   life: 2
+  maxLife: 0
   speed: 0
   myWeapon: {fileID: 0}
   bullet: {fileID: 0}
@@ -1676,7 +1676,7 @@ MonoBehaviour:
   visibles:
     serializedVersion: 2
     m_Bits: 4294967295
-  target: {fileID: 614055426}
+  spawnPoints: []
 --- !u!1 &214823281
 GameObject:
   m_ObjectHideFlags: 0
@@ -4586,13 +4586,11 @@ PrefabInstance:
       propertyPath: m_Text
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 8040602120170405555, guid: 0ddd98e3d42e30f4f817f16f41aa18eb,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: range
       value: 13.36
       objectReference: {fileID: 0}
-    - target: {fileID: 8040602120170405555, guid: 0ddd98e3d42e30f4f817f16f41aa18eb,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: angle
       value: 98.63
       objectReference: {fileID: 0}
@@ -4611,8 +4609,7 @@ PrefabInstance:
       propertyPath: m_Text
       value: TITO
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8040602120170405555, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
 --- !u!1 &614055422 stripped
 GameObject:
@@ -4650,11 +4647,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e1a8eac93ddf640a8289be4983234b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _myRen: {fileID: 0}
-  user: 
-  bullets: 3
-  charger: 3
+  user: TITO
+  bullets: 5
+  charger: 5
   life: 2
+  maxLife: 0
   speed: 0
   myWeapon: {fileID: 0}
   bullet: {fileID: 0}
@@ -4664,7 +4661,7 @@ MonoBehaviour:
   visibles:
     serializedVersion: 2
     m_Bits: 4294967295
-  target: {fileID: 0}
+  spawnPoints: []
 --- !u!135 &614055427
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -7040,13 +7037,11 @@ PrefabInstance:
       propertyPath: m_Text
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 8040602120170405555, guid: 0ddd98e3d42e30f4f817f16f41aa18eb,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: range
       value: 13.36
       objectReference: {fileID: 0}
-    - target: {fileID: 8040602120170405555, guid: 0ddd98e3d42e30f4f817f16f41aa18eb,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: angle
       value: 98.63
       objectReference: {fileID: 0}
@@ -7066,7 +7061,7 @@ PrefabInstance:
       value: PEPE
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 8040602120170405555, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
 --- !u!1 &991737567
 GameObject:
