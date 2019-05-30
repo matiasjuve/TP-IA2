@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using IA2;
 
 public class Agent : MonoBehaviour
@@ -12,14 +13,17 @@ public class Agent : MonoBehaviour
 
     public string user;
     public int bullets = 3;
+    public int charger = 3;
     public int life = 2;
     public float speed;
     public GameObject myWeapon;
     public Bullet bullet;
+    public Text nameDisplay;
 
     private void Awake()
     {
         _myRb = gameObject.GetComponent<Rigidbody>();
+        DisplayName(tag);
 
         //PARTE 1: SETEO INICIAL
 
@@ -65,43 +69,42 @@ public class Agent : MonoBehaviour
         //Shoot
         shoot.OnUpdate += () =>
         {
+            if (life > 0)
+            {
+                if (bullets > 0) {
+                    var bul = Instantiate(bullet);
+                    bul.transform.position = transform.position + transform.forward;
+                    bul.transform.forward = transform.forward;
+                    SendInputToFSM(Conditions.MOVE);
+                }
+                else
+                {
+                    myWeapon.GetComponent<Renderer>().material.color = Color.red;
+                    SendInputToFSM(Conditions.RECHARGE);
+                }
+            }
 
-            //El disparo
-
-            if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
-                SendInputToFSM(Conditions.RECHARGE);
-            else if (Input.GetKeyDown(KeyCode.Space))
-                SendInputToFSM(Conditions.SHOOT);
-        };
-        shoot.OnFixedUpdate += () =>
-        {
-            _myRb.velocity += (transform.forward * Input.GetAxis("Vertical") * 20f + transform.right * Input.GetAxis("Horizontal") * 20f) * Time.deltaTime;
-        };
-        shoot.OnExit += x =>
-        {
-            //x es el input que recibí, por lo que puedo modificar el comportamiento según a donde estoy llendo
-            if (x != Conditions.SHOOT)
-                _myRb.velocity = Vector3.zero;
+            else
+            {
+                SendInputToFSM(Conditions.RESPAWN);
+            }
         };
 
         //Recharge
         recharge.OnEnter += x =>
         {
             //tambien uso el rigidbody, pero en vez de tener una variable en cada estado, tengo una sola referencia compartida...
-            _myRb.AddForce(transform.up * 10f, ForceMode.Impulse);
+            StartCoroutine("Recharge");
+            myWeapon.GetComponent<Renderer>().material.color = Color.green;
+            SendInputToFSM(Conditions.MOVE);
         };
+
         recharge.OnUpdate += () =>
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-                SendInputToFSM(Conditions.SHOOT);
-        };
-        recharge.GetTransition(Conditions.SHOOT).OnTransition += x =>
-        {
-            _myRen.material.color = Color.red;
-        };
-        recharge.GetTransition(Conditions.RECHARGE).OnTransition += x =>
-        {
-            _myRen.material.color = Color.white;
+            if (life <= 0)
+            {
+                SendInputToFSM(Conditions.RESPAWN);
+            }
         };
 
         //con todo ya creado, creo la FSM y le asigno el primer estado
@@ -126,5 +129,16 @@ public class Agent : MonoBehaviour
     public void TakeDamage(int damage)
     {
         life -= damage;
+    }
+
+    public void DisplayName(string name)
+    {
+        nameDisplay.text = name;
+    }
+
+    public IEnumerator Recharge()
+    {
+        yield return new WaitForSeconds(1.5f);
+        bullets += charger;
     }
 }
