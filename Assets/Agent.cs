@@ -19,6 +19,10 @@ public class Agent : MonoBehaviour
     public GameObject myWeapon;
     public Bullet bullet;
     public Text nameDisplay;
+    public float range;
+    public int angle;
+    public LayerMask visibles = ~0;
+    public Agent enemy;
 
     private void Awake()
     {
@@ -119,6 +123,7 @@ public class Agent : MonoBehaviour
     private void Update()
     {
         _myFsm.Update();
+        IsInSight();
     }
 
     private void FixedUpdate()
@@ -140,5 +145,41 @@ public class Agent : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         bullets += charger;
+    }
+
+    public bool IsInSight(Transform target)
+    {
+        //Solo para debuggear, esta linea no deberia estar aca
+        var debugTarget = target;
+
+        //Vector entre la posicion del target y mi posicion
+        var positionDiference = target.position - transform.position;
+        //Distancia al target
+        var distance = positionDiference.magnitude;
+
+        // - Si esta mas lejos que mi rango => no lo veo
+        if (distance > range) return false;
+
+        //Angulo entre mi forward y la direccion al target
+        var angleToTarget = Vector3.Angle(transform.forward, positionDiference);//No hace falta normalizar, por qué?
+
+        // - Si el angulo es mayor a la mitad de mi angulo maximo => no lo veo
+        if (angleToTarget > angle / 2) return false;
+        //Por qué dividimos por 2?
+        //El angulo de vision lo tomamos entre extremo y extremo del rango,
+        //en cabio el angulo al target entre el centro y el el extremo.
+
+        // - Tiramos un rayo para chequear que no haya nada obstruyendo la vista.
+        RaycastHit hitInfo;//En caso de haber una colision en el rayo aca se guarda la informacion
+
+        if (Physics.Raycast(transform.position, positionDiference, out hitInfo, range, visibles))
+        {
+            //Si entra aca => colisiono con algo => hay algo obstruyendo
+            //>>PERO<< tenemos que chequea que ese algo no sea el objeto que queremos ver
+            if (hitInfo.transform != target) return false;
+        }
+
+        //Si no paso nada de lo anterior, el objeto esta a la vista
+        return true;
     }
 }
