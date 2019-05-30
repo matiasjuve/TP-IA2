@@ -22,7 +22,7 @@ public class Agent : MonoBehaviour
     public float range;
     public int angle;
     public LayerMask visibles = ~0;
-    public Agent enemy;
+    public Agent target;
 
     private void Awake()
     {
@@ -123,7 +123,8 @@ public class Agent : MonoBehaviour
     private void Update()
     {
         _myFsm.Update();
-        IsInSight();
+
+        if(target != null) IsInSight(target.transform);
     }
 
     private void FixedUpdate()
@@ -182,4 +183,18 @@ public class Agent : MonoBehaviour
         //Si no paso nada de lo anterior, el objeto esta a la vista
         return true;
     }
+
+    /*public Agent SetTarget(List<Agent> enemys)
+    {
+        if (target == null)
+        {
+            foreach (var item in enemys)
+            {
+                if (IsInSight(item.transform)) return item;
+            }
+        }
+
+        else return default(Agent);
+    }*/
+
 }
