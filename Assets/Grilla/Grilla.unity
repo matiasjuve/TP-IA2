@@ -1676,6 +1676,7 @@ MonoBehaviour:
   visibles:
     serializedVersion: 2
     m_Bits: 4294967295
+  enemysOnRange: []
   spawnPoints: []
 --- !u!1 &214823281
 GameObject:
@@ -4530,13 +4531,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: range
+      value: 13.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: angle
+      value: 98.63
+      objectReference: {fileID: 0}
     - target: {fileID: 198024, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
       propertyPath: m_Name
       value: Tito
       objectReference: {fileID: 0}
     - target: {fileID: 445138, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -76.57
+      value: -80.32
       objectReference: {fileID: 0}
     - target: {fileID: 445138, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4585,14 +4594,6 @@ PrefabInstance:
     - target: {fileID: 10250584, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
       propertyPath: m_Text
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: range
-      value: 13.36
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: angle
-      value: 98.63
       objectReference: {fileID: 0}
     - target: {fileID: 949084661477746538, guid: 0ddd98e3d42e30f4f817f16f41aa18eb,
         type: 3}
@@ -4650,17 +4651,18 @@ MonoBehaviour:
   user: TITO
   bullets: 5
   charger: 5
-  life: 2
-  maxLife: 0
-  speed: 0
-  myWeapon: {fileID: 0}
-  bullet: {fileID: 0}
-  nameDisplay: {fileID: 0}
-  range: 0
-  angle: 0
+  life: 3
+  maxLife: 3
+  speed: 2
+  myWeapon: {fileID: 438376327}
+  bullet: {fileID: 7970842720964044238, guid: 7a8b7fe4df4fc5f4c8fc8b882835a8c6, type: 3}
+  nameDisplay: {fileID: 614055437}
+  range: 10
+  angle: 45
   visibles:
     serializedVersion: 2
     m_Bits: 4294967295
+  enemysOnRange: []
   spawnPoints: []
 --- !u!135 &614055427
 SphereCollider:
@@ -4705,6 +4707,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1092797291}
+--- !u!102 &614055437 stripped
+TextMesh:
+  m_CorrespondingSourceObject: {fileID: 949084661487612020, guid: 0ddd98e3d42e30f4f817f16f41aa18eb,
+    type: 3}
+  m_PrefabInstance: {fileID: 614055421}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &628418719
 GameObject:
   m_ObjectHideFlags: 0
@@ -6981,13 +6989,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: range
+      value: 13.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: angle
+      value: 98.63
+      objectReference: {fileID: 0}
     - target: {fileID: 198024, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
       propertyPath: m_Name
       value: Pepe
       objectReference: {fileID: 0}
     - target: {fileID: 445138, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -61.1
+      value: -57.53
       objectReference: {fileID: 0}
     - target: {fileID: 445138, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7036,14 +7052,6 @@ PrefabInstance:
     - target: {fileID: 10250584, guid: 0ddd98e3d42e30f4f817f16f41aa18eb, type: 3}
       propertyPath: m_Text
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: range
-      value: 13.36
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: angle
-      value: 98.63
       objectReference: {fileID: 0}
     - target: {fileID: 949084661477746538, guid: 0ddd98e3d42e30f4f817f16f41aa18eb,
         type: 3}

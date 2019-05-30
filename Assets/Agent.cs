@@ -18,12 +18,12 @@ public class Agent : MonoBehaviour
     public float speed;
     public GameObject myWeapon;
     public Bullet bullet;
-    public Text nameDisplay;
+    public TextMesh nameDisplay;
     public float range;
     public int angle;
     public LayerMask visibles = ~0;
-    private Agent target;
-    private List<Agent> enemysOnRange;
+    private Transform target;
+    public List<Transform> enemysOnRange;
     public List<Transform> spawnPoints;
 
     private void Awake()
@@ -67,14 +67,9 @@ public class Agent : MonoBehaviour
         move.OnUpdate += () =>
         {
             Debug.Log("ESTOY EN MOVE");
-            if (life > 0) MoveToOther(Conditions.SHOOT, 2);
-            else SendInputToFSM(Conditions.RESPAWN);
+            if (life > 0  && target != null) StartCoroutine("MoveToOther");
+            else if(life <= 0)SendInputToFSM(Conditions.RESPAWN);
             //movimiento de cada personaje.
-
-            /*if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
-                 SendInputToFSM(Conditions.MOVE);
-             else if (Input.GetKeyDown(KeyCode.Space))
-                 SendInputToFSM(Conditions.SHOOT);*/
         };
 
         //Shoot
@@ -169,10 +164,10 @@ public class Agent : MonoBehaviour
         bullets += charger;
     }
 
-    public IEnumerator MoveToOther(Conditions condit, int time)
+    public IEnumerator MoveToOther()
     {
-        yield return new WaitForSeconds(time);
-        SendInputToFSM(condit);
+        yield return new WaitForSeconds(2);
+        SendInputToFSM(Conditions.SHOOT);
     }
 
     public bool IsInSight(Transform target)
@@ -211,13 +206,13 @@ public class Agent : MonoBehaviour
         return true;
     }
 
-    public Agent SetTarget(List<Agent> enemys)
+    public Transform SetTarget(List<Transform> enemys)
     {
-        if (target == null)
+        if (target == null && enemys != null)
         {
             foreach (var item in enemys)
             {
-                if (IsInSight(item.transform)) return item;
+                if (IsInSight(item)) return item;
             }
         }
         return null;
@@ -225,17 +220,17 @@ public class Agent : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<Agent>())
+        if (other.gameObject.GetComponent<Agent>() && other.gameObject != gameObject)
         {
-            enemysOnRange.Add(other.GetComponent<Agent>());
+            enemysOnRange.Add(other.transform);
         }
     }
 
     public void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.GetComponent<Agent>())
+        if (other.gameObject.GetComponent<Agent>() && other.gameObject != gameObject)
         {
-            enemysOnRange.Remove(other.GetComponent<Agent>());
+            enemysOnRange.Remove(other.transform);
         }
     }
 }
