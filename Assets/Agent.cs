@@ -24,10 +24,17 @@ public class Agent : MonoBehaviour
     public TextMesh nameDisplay;
     public float range;
     public int angle;
-    public LayerMask visibles = ~0;
-    private Transform target;
+    public LayerMask visibles;
+    public LayerMask adasda;
+    public Transform target = null;
     public List<Transform> enemysOnRange;
     public List<Transform> spawnPoints;
+
+
+    public float shootcd;
+    private bool canShoot = true;
+
+    private int sideStepDirection;
 
     private void Awake()
     {
@@ -52,8 +59,8 @@ public class Agent : MonoBehaviour
 
         StateConfigurer.Create(shoot)
             .SetTransition(Conditions.MOVE, move)
-            .SetTransition(Conditions.RECHARGE, recharge)
             .SetTransition(Conditions.RESPAWN, respawn)
+            .SetTransition(Conditions.RECHARGE, recharge)
             .Done();
 
         StateConfigurer.Create(recharge)
@@ -72,50 +79,58 @@ public class Agent : MonoBehaviour
             Debug.Log("ESTOY EN MOVE");
             if (life > 0 && target != null) SendInputToFSM(Conditions.SHOOT);
             else if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
-            //movimiento de cada personaje.
+            //CODIGO DE MOVIMIENTO.
         };
 
         //Shoot
         shoot.OnUpdate += () =>
         {
             Debug.Log("ESTOY EN SHOOT");
-            if (life > 0)
+
+            if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
+
+            if (target != null)
             {
-                if (target != null)
-                {
-                    transform.LookAt(target); 
-                }
+                transform.LookAt(target); 
 
                 if (bullets > 0)
                 {
-                    var bul = Instantiate(bullet);
-                    bul.transform.position = transform.position + transform.forward;
-                    bul.transform.forward = transform.forward;
-                    SendInputToFSM(Conditions.MOVE);
+                    if (canShoot)
+                    {
+                        StartCoroutine(Shoot());
+                    }
+
+                    else
+                    {
+                        SideStep(Direction());
+                    }
                 }
 
                 else
                 {
-                    myWeapon.GetComponent<Renderer>().material.color = Color.red;
                     SendInputToFSM(Conditions.RECHARGE);
                 }
             }
 
             else
             {
-                SendInputToFSM(Conditions.RESPAWN);
+                SendInputToFSM(Conditions.MOVE);
             }
+        };
+        shoot.OnExit += x => 
+        {
+            StopCoroutine(Shoot());
         };
 
         //Recharge
         recharge.OnEnter += x =>
         {
             //tambien uso el rigidbody, pero en vez de tener una variable en cada estado, tengo una sola referencia compartida...
-            StartCoroutine("Recharge");
-            myWeapon.GetComponent<Renderer>().material.color = Color.green;
-            SendInputToFSM(Conditions.MOVE);
+            myWeapon.gameObject.GetComponent<Renderer>().material.color = Color.red;
+            StartCoroutine(Recharge());
+            
+            
         };
-
         recharge.OnUpdate += () =>
         {
             Debug.Log("ESTOY EN RECARGA");
@@ -124,14 +139,19 @@ public class Agent : MonoBehaviour
                 SendInputToFSM(Conditions.RESPAWN);
             }
         };
+        recharge.OnExit += x =>
+         {
+             StopCoroutine(Recharge());
+         };
 
         //Respawn
         respawn.OnEnter += x =>
         {
+            target = null;
             transform.position = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+            Deaths++;
             bullets = charger;
             life = maxLife;
-            target = null;
             myWeapon.GetComponent<Renderer>().material.color = Color.green;
             SendInputToFSM(Conditions.MOVE);
         };
@@ -169,8 +189,10 @@ public class Agent : MonoBehaviour
 
     public IEnumerator Recharge()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(5);
         bullets = charger;
+        myWeapon.GetComponent<Renderer>().material.color = Color.green;
+        SendInputToFSM(Conditions.MOVE);
     }
 
     public IEnumerator MoveToOther()
@@ -179,11 +201,31 @@ public class Agent : MonoBehaviour
         SendInputToFSM(Conditions.SHOOT);
     }
 
+    public IEnumerator Shoot()
+    {
+        var bul = Instantiate(bullet);
+        bul.shooter = this;
+        bul.transform.position = transform.position + transform.forward * 1.3f + transform.up;
+        bul.transform.forward = transform.forward;
+        bullets--;
+        canShoot = false;
+        yield return new WaitForSeconds(1);
+        canShoot = true;
+        
+    }
+
+    public void SideStep(int direction)
+    {
+        transform.position += transform.right * speed * Time.deltaTime * direction;
+    }
+
+    public int Direction()
+    {
+        return Mathf.RoundToInt(Random.Range(-1, 1));
+    }
+
     public bool IsInSight(Transform target)
     {
-        //Solo para debuggear, esta linea no deberia estar aca
-        var debugTarget = target;
-
         //Vector entre la posicion del target y mi posicion
         var positionDiference = target.position - transform.position;
         //Distancia al target
@@ -217,13 +259,14 @@ public class Agent : MonoBehaviour
 
     public Transform SetTarget(List<Transform> enemys)
     {
-        if (target == null && enemys != null)
+        foreach (var item in enemys)
         {
-            foreach (var item in enemys)
+            if (IsInSight(item))
             {
-                if (IsInSight(item)) return item;
+                return item;
             }
         }
+
         return null;
     }
 
@@ -240,6 +283,15 @@ public class Agent : MonoBehaviour
         if (other.gameObject != gameObject)
         {
             enemysOnRange.Remove(other.transform);
+        }
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == 9)
+        {
+            TakeDamage(collision.gameObject.GetComponent<Bullet>().damage);
+            Destroy(collision.gameObject);
         }
     }
 }
