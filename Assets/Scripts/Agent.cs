@@ -12,8 +12,8 @@ public class Agent : MonoBehaviour
     private Rigidbody _myRb;
 
     public string user;
-    public int bullets = 3;
-    public int charger = 3;
+    public int bullets;
+    public int charger;
     public int life = 2;
     public int maxLife;
     public float speed;
@@ -34,7 +34,7 @@ public class Agent : MonoBehaviour
     public float shootcd;
     private bool canShoot = true;
 
-    private int sideStepDirection;
+    public int sideStepDirection;
 
     private void Awake()
     {
@@ -86,7 +86,7 @@ public class Agent : MonoBehaviour
         shoot.OnUpdate += () =>
         {
             Debug.Log("ESTOY EN SHOOT");
-
+            CheckTarget();
             if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
 
             if (target != null)
@@ -102,7 +102,7 @@ public class Agent : MonoBehaviour
 
                     else
                     {
-                        SideStep(Direction());
+                        SideStep(sideStepDirection);
                     }
                 }
 
@@ -125,11 +125,8 @@ public class Agent : MonoBehaviour
         //Recharge
         recharge.OnEnter += x =>
         {
-            //tambien uso el rigidbody, pero en vez de tener una variable en cada estado, tengo una sola referencia compartida...
             myWeapon.gameObject.GetComponent<Renderer>().material.color = Color.red;
-            StartCoroutine(Recharge());
-            
-            
+            StartCoroutine(Recharge());            
         };
         recharge.OnUpdate += () =>
         {
@@ -158,6 +155,14 @@ public class Agent : MonoBehaviour
 
         //con todo ya creado, creo la FSM y le asigno el primer estado
         _myFsm = new EventFSM<Conditions>(move);
+    }
+
+    private void CheckTarget()
+    {
+        if (target != null && !IsInSight(target))
+        {
+            target = null;
+        }
     }
 
     private void SendInputToFSM(Conditions inp)
@@ -208,7 +213,9 @@ public class Agent : MonoBehaviour
         bul.transform.position = transform.position + transform.forward * 1.3f + transform.up;
         bul.transform.forward = transform.forward;
         bullets--;
+        sideStepDirection = Direction();
         canShoot = false;
+
         yield return new WaitForSeconds(1);
         canShoot = true;
         
@@ -221,7 +228,15 @@ public class Agent : MonoBehaviour
 
     public int Direction()
     {
-        return Mathf.RoundToInt(Random.Range(-1, 1));
+        if (Random.value > 0.5f)
+        {
+            return -1;
+        }
+
+        else
+        {
+            return 1;
+        }
     }
 
     public bool IsInSight(Transform target)
