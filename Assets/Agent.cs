@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using IA2;
+using System.Linq;
 
 public class Agent : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class Agent : MonoBehaviour
     public int life = 2;
     public int maxLife;
     public float speed;
+    public int kills = 0;
+    public int Deaths = 0;
     public GameObject myWeapon;
     public Bullet bullet;
     public TextMesh nameDisplay;
@@ -67,15 +70,14 @@ public class Agent : MonoBehaviour
         move.OnUpdate += () =>
         {
             Debug.Log("ESTOY EN MOVE");
-            if (life > 0  && target != null) StartCoroutine("MoveToOther");
-            else if(life <= 0)SendInputToFSM(Conditions.RESPAWN);
+            if (life > 0 && target != null) SendInputToFSM(Conditions.SHOOT);
+            else if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
             //movimiento de cada personaje.
         };
 
         //Shoot
         shoot.OnUpdate += () =>
         {
-
             Debug.Log("ESTOY EN SHOOT");
             if (life > 0)
             {
@@ -227,7 +229,7 @@ public class Agent : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<Agent>() && other.gameObject != gameObject)
+        if (other.gameObject != gameObject && other.gameObject.layer == 8)
         {
             enemysOnRange.Add(other.transform);
         }
@@ -235,7 +237,7 @@ public class Agent : MonoBehaviour
 
     public void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.GetComponent<Agent>() && other.gameObject != gameObject)
+        if (other.gameObject != gameObject)
         {
             enemysOnRange.Remove(other.transform);
         }
