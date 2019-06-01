@@ -27,8 +27,9 @@ public class Agent : MonoBehaviour
     public LayerMask visibles;
     private Transform target = null;
     private List<Transform> enemysOnRange = new List<Transform>();
+    public List<Transform> spawnPoints;
 
-    private Vector3 search;
+    private Vector3 search = Vector3.zero;
 
     public float shootcd;
     private bool canShoot = true;
@@ -41,7 +42,8 @@ public class Agent : MonoBehaviour
         DisplayName(user);
         bullets = charger;
         life = maxLife;
-        search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
+        search = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+        //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
 
         //PARTE 1: SETEO INICIAL
 
@@ -76,7 +78,8 @@ public class Agent : MonoBehaviour
         //Move
         move.OnEnter += x =>
         {
-            search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
+            //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
+            search = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
         };
         move.OnUpdate += () =>
         {
@@ -84,8 +87,16 @@ public class Agent : MonoBehaviour
             if (life > 0 && target != null) SendInputToFSM(Conditions.SHOOT);
             else if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
 
-            if (Vector3.Distance(search, transform.position) > 0.5f) transform.position += (search - transform.position).normalized * speed * Time.deltaTime;
-            else { search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position; }
+            if (Vector3.Distance(search, transform.position) > 2f)
+            {
+                transform.position += (search - transform.position).normalized * speed * Time.deltaTime;
+                transform.forward = (search - transform.position).normalized;
+            }
+            else
+            {
+                //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
+                search = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+            }
             
             //CODIGO DE MOVIMIENTO.
         };
@@ -155,6 +166,7 @@ public class Agent : MonoBehaviour
             target = null;
             transform.position = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
             Deaths++;
+            print("ME MORIII VIEJO QUE FRAGIL ES LA VIDA");
             bullets = charger;
             life = maxLife;
             myWeapon.GetComponent<Renderer>().material.color = Color.green;
@@ -315,6 +327,7 @@ public class Agent : MonoBehaviour
         if (collision.gameObject.layer == 9)
         {
             TakeDamage(collision.gameObject.GetComponent<Bullet>().damage);
+            if (life <= 0) collision.gameObject.GetComponent<Bullet>().shooter.kills++;
             Destroy(collision.gameObject);
         }
     }
