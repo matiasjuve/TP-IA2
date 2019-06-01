@@ -13,14 +13,4 @@ public class Bullet : MonoBehaviour
         transform.position += transform.forward * speed * Time.deltaTime;
         Destroy(gameObject, 10);
     }
-
-   /* public void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.GetComponentInParent<Agent>())
-        {
-            collision.gameObject.GetComponentInParent<Agent>().TakeDamage(1);
-            if (collision.gameObject.GetComponentInParent<Agent>().life == 0) shooter.kills += 1;
-            Destroy(gameObject);
-        }
-    }*/
 }

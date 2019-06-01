@@ -25,7 +25,6 @@ public class Agent : MonoBehaviour
     public float range;
     public int angle;
     public LayerMask visibles;
-    public LayerMask adasda;
     public Transform target = null;
     public List<Transform> enemysOnRange;
     public List<Transform> spawnPoints;
@@ -39,9 +38,10 @@ public class Agent : MonoBehaviour
     private void Awake()
     {
         _myRb = gameObject.GetComponent<Rigidbody>();
-        DisplayName(tag);
+        DisplayName(user);
         bullets = charger;
         life = maxLife;
+        //spawnPoints = SpawnPoints.Instance.spawnPoints;
 
         //PARTE 1: SETEO INICIAL
 
