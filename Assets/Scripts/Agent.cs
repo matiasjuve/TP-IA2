@@ -12,36 +12,36 @@ public class Agent : MonoBehaviour
     private Rigidbody _myRb;
 
     public string user;
-    public int bullets;
     public int charger;
-    public int life = 2;
     public int maxLife;
     public float speed;
+    private int life;
     public int kills = 0;
     public int Deaths = 0;
+    private int bullets;
     public GameObject myWeapon;
     public Bullet bullet;
     public TextMesh nameDisplay;
     public float range;
     public int angle;
     public LayerMask visibles;
-    public Transform target = null;
-    public List<Transform> enemysOnRange;
-    public List<Transform> spawnPoints;
+    private Transform target = null;
+    private List<Transform> enemysOnRange = new List<Transform>();
 
+    private Vector3 search;
 
     public float shootcd;
     private bool canShoot = true;
 
-    public int sideStepDirection;
+    private int sideStepDirection;
 
-    private void Awake()
+    private void Start()
     {
         _myRb = gameObject.GetComponent<Rigidbody>();
         DisplayName(user);
         bullets = charger;
         life = maxLife;
-        //spawnPoints = SpawnPoints.Instance.spawnPoints;
+        search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
 
         //PARTE 1: SETEO INICIAL
 
@@ -74,11 +74,19 @@ public class Agent : MonoBehaviour
 
         //PARTE 2: SETEO DE LOS ESTADOS
         //Move
+        move.OnEnter += x =>
+        {
+            search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
+        };
         move.OnUpdate += () =>
         {
             Debug.Log("ESTOY EN MOVE");
             if (life > 0 && target != null) SendInputToFSM(Conditions.SHOOT);
             else if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
+
+            if (Vector3.Distance(search, transform.position) > 0.5f) transform.position += (search - transform.position).normalized * speed * Time.deltaTime;
+            else { search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position; }
+            
             //CODIGO DE MOVIMIENTO.
         };
 
@@ -145,7 +153,7 @@ public class Agent : MonoBehaviour
         respawn.OnEnter += x =>
         {
             target = null;
-            transform.position = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+            transform.position = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
             Deaths++;
             bullets = charger;
             life = maxLife;
@@ -223,7 +231,8 @@ public class Agent : MonoBehaviour
 
     public void SideStep(int direction)
     {
-        transform.position += transform.right * speed * Time.deltaTime * direction;
+        transform.position += (transform.right * direction) * speed * Time.deltaTime ;
+        if(Vector3.Distance(target.position, transform.position) > range/1.5f)transform.position += (target.position - transform.position).normalized * speed * Time.deltaTime;
     }
 
     public int Direction()
