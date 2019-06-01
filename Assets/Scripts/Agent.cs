@@ -43,6 +43,7 @@ public class Agent : MonoBehaviour
         bullets = charger;
         life = maxLife;
         search = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+        //LevelManager.Instance.players.Add(this);
         //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
 
         //PARTE 1: SETEO INICIAL
@@ -83,7 +84,6 @@ public class Agent : MonoBehaviour
         };
         move.OnUpdate += () =>
         {
-            Debug.Log("ESTOY EN MOVE");
             if (life > 0 && target != null) SendInputToFSM(Conditions.SHOOT);
             else if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
 
@@ -104,7 +104,6 @@ public class Agent : MonoBehaviour
         //Shoot
         shoot.OnUpdate += () =>
         {
-            Debug.Log("ESTOY EN SHOOT");
             CheckTarget();
             if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
 
@@ -149,7 +148,6 @@ public class Agent : MonoBehaviour
         };
         recharge.OnUpdate += () =>
         {
-            Debug.Log("ESTOY EN RECARGA");
             if (life <= 0)
             {
                 SendInputToFSM(Conditions.RESPAWN);
@@ -166,7 +164,6 @@ public class Agent : MonoBehaviour
             target = null;
             transform.position = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
             Deaths++;
-            print("ME MORIII VIEJO QUE FRAGIL ES LA VIDA");
             bullets = charger;
             life = maxLife;
             myWeapon.GetComponent<Renderer>().material.color = Color.green;
