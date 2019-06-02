@@ -65,7 +65,7 @@ public class LevelManager : MonoBehaviour
 
         foreach (var item in Top3PlayerWithMostKills)
         {
-            top3.text +=item.Item1 + "    " + item.Item2.ToString() + "                                            "; 
+            top3.text +=item.Item1 + "    " + item.Item2.ToString() + "\r\n"; 
         }
     }
 
@@ -89,7 +89,7 @@ public class LevelManager : MonoBehaviour
 
         foreach (var item in kdapositivos)
         {
-            kda.text += item.Item1 + "    " + item.Item2.ToString() + "                                            ";
+            kda.text += item.Item1 + "    " + item.Item2.ToString() + "\r\n";
         }
 
     }
