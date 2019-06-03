@@ -23,23 +23,17 @@ public class LevelManager : MonoBehaviour
 
     public List<Tuple<string, int>> top3killers = new List<Tuple<string, int>>();
 
-    public Tuple<string, float> kdaTuple = Tuple.Create("",0f);
+    public Tuple<string, float> kdaTuple = Tuple.Create("", 0f);
     public List<string> names;
 
     void Start()
     {
         top3.text = "";
         kda.text = "";
-        victims.text = "";
-        GetTop3();
-        GetKds();
-        GetKillList();
-        
-        //Instance = this;
-        
+        victims.text = "";  
     }
 
-    void FixedUpdate()
+    void Update()
     {
         gameTime -= Time.deltaTime;
 
@@ -53,12 +47,20 @@ public class LevelManager : MonoBehaviour
         {
             stats.SetActive(true);
             timer.SetActive(false);
-            
+
+
             /*foreach (var item in GetTop3())
             {
                 Debug.Log(item.Item1 + "" + item.Item2);
             }*/
             //names = GetTop3()
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            GetTop3();
+            GetKds();
+            GetKillList();
         }
     }
 
@@ -101,13 +103,16 @@ public class LevelManager : MonoBehaviour
     }
     public void GetKillList()
     {
-        var victimsList = players.Select(x => x.victims).SelectMany(x => x).Where(x => x.Item1 == top3killers.First().Item1);
-
-        victims.text += victimsList.First().Item1 + "Killed These Players /r/n/r/n";
-
-        foreach (var item in victimsList)
+        if (players.Select(x => x.victims).SelectMany(x => x).Count() > 0)
         {
-            victims.text += item.Item2.user + "/r/n";
+            var victimsList = players.Select(x => x.victims).SelectMany(x => x).Where(x => x.Item1 == top3killers.First().Item1);
+
+            victims.text += victimsList.First().Item1 + "Killed These Players"  +  " /r/n";
+
+            foreach (var item in victimsList)
+            {
+                victims.text += item.Item2.user + " /r/n";
+            }
         }
     }
 }

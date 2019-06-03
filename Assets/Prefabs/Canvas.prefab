@@ -1,5 +1,84 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1859528791
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1859528792}
+  - component: {fileID: 1859528794}
+  - component: {fileID: 1859528793}
+  m_Layer: 5
+  m_Name: VictimsText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1859528792
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859528791}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.46793604, y: 0.46793604, z: 0.46793604}
+  m_Children: []
+  m_Father: {fileID: 6664752629689127508}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -1623, y: -531.1}
+  m_SizeDelta: {x: 1113, y: 2107.8}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1859528794
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859528791}
+  m_CullTransparentMesh: 0
+--- !u!114 &1859528793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859528791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 88
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 90
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: TOP PLAYER VICTIMS
 --- !u!1 &5085811754703242330
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -72,7 +151,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 116
-    m_Alignment: 1
+    m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -152,8 +231,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -932.9999, y: -384}
-  m_SizeDelta: {x: 1460.1, y: 363.9}
+  m_AnchoredPosition: {x: -932.9999, y: -666.7}
+  m_SizeDelta: {x: 1460.1, y: 1542.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6664752629622129549
 CanvasRenderer:
@@ -176,7 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -190,7 +269,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 278
-    m_Alignment: 1
+    m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -232,6 +311,7 @@ RectTransform:
   - {fileID: 6664752629622129551}
   - {fileID: 6664752630789798602}
   - {fileID: 612825684011292925}
+  - {fileID: 1859528792}
   m_Father: {fileID: 6664752630640148128}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -261,7 +341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.392}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.6784314}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -290,10 +370,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameTime: 0
-  timerMinutes: {fileID: 0}
-  timerSeconds: {fileID: 0}
-  top3: {fileID: 0}
-  kda: {fileID: 0}
+  timerMinutes: {fileID: 6664752629772562523}
+  timerSeconds: {fileID: 6664752630373588508}
+  top3: {fileID: 6664752629622129550}
+  kda: {fileID: 8602696139604490734}
+  victims: {fileID: 1859528793}
   players:
   - {fileID: 0}
   - {fileID: 0}
@@ -304,6 +385,7 @@ MonoBehaviour:
   - {fileID: 0}
   stats: {fileID: 6664752629689127509}
   timer: {fileID: 6664752629481396915}
+  names: []
 --- !u!1 &6664752629772562500
 GameObject:
   m_ObjectHideFlags: 0
@@ -659,6 +741,7 @@ MonoBehaviour:
   timerSeconds: {fileID: 6664752630373588508}
   top3: {fileID: 6664752629622129550}
   kda: {fileID: 8602696139604490734}
+  victims: {fileID: 1859528793}
   players:
   - {fileID: 0}
   - {fileID: 0}
@@ -669,6 +752,7 @@ MonoBehaviour:
   - {fileID: 0}
   stats: {fileID: 6664752629689127509}
   timer: {fileID: 6664752629481396915}
+  names: []
 --- !u!1 &6664752630789798603
 GameObject:
   m_ObjectHideFlags: 0
@@ -727,7 +811,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -862,7 +946,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -932.99994, y: -234.93005}
-  m_SizeDelta: {x: 1145.1, y: 356.74}
+  m_SizeDelta: {x: 2250.9, y: 356.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6664752631488673684
 CanvasRenderer:
@@ -885,7 +969,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -905,7 +989,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'TOP 3 '
+  m_Text: TOP 3 KILLERS
 --- !u!1 &6664752631532406757
 GameObject:
   m_ObjectHideFlags: 0

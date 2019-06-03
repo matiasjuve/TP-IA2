@@ -30,7 +30,7 @@ public class Agent : MonoBehaviour
     private List<Transform> enemysOnRange = new List<Transform>();
     public List<Transform> spawnPoints;
 
-    public List<Tuple<string, Agent>> victims;
+    public List<Tuple<string, Agent>> victims = new List<Tuple<string, Agent>>();
 
     private Vector3 search = Vector3.zero;
 
@@ -327,7 +327,11 @@ public class Agent : MonoBehaviour
         if (collision.gameObject.layer == 9)
         {
             TakeDamage(collision.gameObject.GetComponent<Bullet>().damage);
-            if (life <= 0) collision.gameObject.GetComponent<Bullet>().shooter.kills++;
+            if (life <= 0)
+            {
+                collision.gameObject.GetComponent<Bullet>().shooter.kills++;
+                collision.gameObject.GetComponent<Bullet>().shooter.victims.Add(Tuple.Create(collision.gameObject.GetComponent<Bullet>().shooter.user, this));
+            }
             Destroy(collision.gameObject);
         }
     }
