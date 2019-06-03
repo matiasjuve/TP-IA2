@@ -15,10 +15,13 @@ public class LevelManager : MonoBehaviour
 
     public Text top3;
     public Text kda;
+    public Text victims;
 
     public List<Agent> players;
     public GameObject stats;
     public GameObject timer;
+
+    public List<Tuple<string, int>> top3killers = new List<Tuple<string, int>>();
 
     public Tuple<string, float> kdaTuple = Tuple.Create("",0f);
     public List<string> names;
@@ -27,8 +30,11 @@ public class LevelManager : MonoBehaviour
     {
         top3.text = "";
         kda.text = "";
+        victims.text = "";
         GetTop3();
         GetKds();
+        GetKillList();
+        
         //Instance = this;
         
     }
@@ -65,10 +71,10 @@ public class LevelManager : MonoBehaviour
 
         foreach (var item in Top3PlayerWithMostKills)
         {
-            top3.text +=item.Item1 + "    " + item.Item2.ToString() + "\r\n"; 
+            top3.text +=item.Item1 + "    " + item.Item2.ToString() + "\r\n";
+            top3killers.Add(item);
         }
     }
-
     public void GetKds()
     {
         var kdapositivos = players.Aggregate(new List<Tuple<string,float>>(), (x, y) =>
@@ -92,5 +98,16 @@ public class LevelManager : MonoBehaviour
             kda.text += item.Item1 + "    " + item.Item2.ToString() + "\r\n";
         }
 
+    }
+    public void GetKillList()
+    {
+        var victimsList = players.Select(x => x.victims).SelectMany(x => x).Where(x => x.Item1 == top3killers.First().Item1);
+
+        victims.text += victimsList.First().Item1 + "Killed These Players /r/n/r/n";
+
+        foreach (var item in victimsList)
+        {
+            victims.text += item.Item2.user + "/r/n";
+        }
     }
 }

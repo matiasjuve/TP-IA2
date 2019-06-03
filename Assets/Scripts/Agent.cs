@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using IA2;
+using System;
 using System.Linq;
 
 public class Agent : MonoBehaviour
@@ -29,6 +30,8 @@ public class Agent : MonoBehaviour
     private List<Transform> enemysOnRange = new List<Transform>();
     public List<Transform> spawnPoints;
 
+    public List<Tuple<string, Agent>> victims;
+
     private Vector3 search = Vector3.zero;
 
     public float shootcd;
@@ -42,7 +45,7 @@ public class Agent : MonoBehaviour
         DisplayName(user);
         bullets = charger;
         life = maxLife;
-        search = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+        search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
         //LevelManager.Instance.players.Add(this);
         //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
 
@@ -80,7 +83,7 @@ public class Agent : MonoBehaviour
         move.OnEnter += x =>
         {
             //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
-            search = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+            search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
         };
         move.OnUpdate += () =>
         {
@@ -95,7 +98,7 @@ public class Agent : MonoBehaviour
             else
             {
                 //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
-                search = spawnPoints[Random.Range(0, spawnPoints.Count - 1)].position;
+                search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
             }
             
             //CODIGO DE MOVIMIENTO.
@@ -162,7 +165,7 @@ public class Agent : MonoBehaviour
         respawn.OnEnter += x =>
         {
             target = null;
-            transform.position = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
+            transform.position = SpawnPoints.Instance.spawnPoints[UnityEngine.Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
             Deaths++;
             bullets = charger;
             life = maxLife;
@@ -246,7 +249,7 @@ public class Agent : MonoBehaviour
 
     public int Direction()
     {
-        if (Random.value > 0.5f)
+        if (UnityEngine.Random.value > 0.5f)
         {
             return -1;
         }
