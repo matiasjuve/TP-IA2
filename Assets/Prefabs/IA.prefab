@@ -77,12 +77,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e1a8eac93ddf640a8289be4983234b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  user: TITO
+  user: TheKillerMaster
   charger: 5
   maxLife: 3
   speed: 2
   kills: 0
   Deaths: 0
+  bullets: 0
   myWeapon: {fileID: 8780544880934479404}
   bullet: {fileID: 7970842720964044238, guid: 7a8b7fe4df4fc5f4c8fc8b882835a8c6, type: 3}
   nameDisplay: {fileID: 8780544880973049349}
@@ -90,7 +91,8 @@ MonoBehaviour:
   angle: 150
   visibles:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 4294967295
+  target: {fileID: 0}
   spawnPoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -114,8 +116,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1.9502497, z: 1}
-  m_Center: {x: -0, y: 1.0913749, z: 0}
+  m_Size: {x: 1, y: 1.9502497, z: 1.6310425}
+  m_Center: {x: 0, y: 1.0913749, z: 0.31552124}
 --- !u!1 &8780544880934479404
 GameObject:
   m_ObjectHideFlags: 0

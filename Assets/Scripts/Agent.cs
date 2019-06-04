@@ -19,14 +19,14 @@ public class Agent : MonoBehaviour
     private int life;
     public int kills = 0;
     public int Deaths = 0;
-    private int bullets;
+    public int bullets;
     public GameObject myWeapon;
     public Bullet bullet;
     public TextMesh nameDisplay;
     public float range;
     public int angle;
     public LayerMask visibles;
-    private Transform target = null;
+    public Transform target = null;
     private List<Transform> enemysOnRange = new List<Transform>();
     public List<Transform> spawnPoints;
 
@@ -95,7 +95,7 @@ public class Agent : MonoBehaviour
             if (Vector3.Distance(search, transform.position) > 2f)
             {
                 transform.position += (search - transform.position).normalized * speed * Time.deltaTime;
-                transform.forward = (search - transform.position).normalized;
+                transform.forward = Vector3.Lerp(transform.forward,(search - transform.position).normalized, 0.1f);
             }
             else
             {
@@ -109,7 +109,6 @@ public class Agent : MonoBehaviour
         //Shoot
         shoot.OnUpdate += () =>
         {
-            CheckTarget();
             if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
 
             if (target != null)
@@ -166,7 +165,7 @@ public class Agent : MonoBehaviour
         //Respawn
         respawn.OnEnter += x =>
         {
-            target = null;
+            //target = null;
             transform.position = SpawnPoints.Instance.spawnPoints[UnityEngine.Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
             Deaths++;
             bullets = charger;
@@ -179,12 +178,39 @@ public class Agent : MonoBehaviour
         _myFsm = new EventFSM<Conditions>(move);
     }
 
+    public IEnumerator Recharge()
+    {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.5f, 1.5f));
+        bullets = charger;
+        myWeapon.GetComponent<Renderer>().material.color = Color.green;
+        SendInputToFSM(Conditions.MOVE);
+        StopCoroutine(Recharge());
+    }
+
+    public IEnumerator Shoot()
+    {
+        var bul = Instantiate(bullet);
+        bul.shooter = this;
+        bul.transform.position = transform.position + transform.forward * 1.3f + transform.up;
+        bul.transform.forward = transform.forward;
+        bullets--;
+        sideStepDirection = Direction();
+        canShoot = false;
+
+        yield return new WaitForSeconds(1);
+        canShoot = true;
+        StopCoroutine(Shoot());
+        
+    }
     private void CheckTarget()
     {
         if (target != null && !IsInSight(target))
         {
             target = null;
+            return;
         }
+
+        target = SetTarget(enemysOnRange);
     }
 
     private void SendInputToFSM(Conditions inp)
@@ -196,7 +222,8 @@ public class Agent : MonoBehaviour
     {
         _myFsm.Update();
 
-        target = SetTarget(enemysOnRange);
+        CheckTarget();
+        
     }
 
     private void FixedUpdate()
@@ -214,41 +241,13 @@ public class Agent : MonoBehaviour
         nameDisplay.text = name;
     }
 
-    public IEnumerator Recharge()
-    {
-        yield return new WaitForSeconds(5);
-        bullets = charger;
-        myWeapon.GetComponent<Renderer>().material.color = Color.green;
-        SendInputToFSM(Conditions.MOVE);
-    }
 
-    public IEnumerator MoveToOther()
-    {
-        yield return new WaitForSeconds(2);
-        SendInputToFSM(Conditions.SHOOT);
-    }
-
-    public IEnumerator Shoot()
-    {
-        var bul = Instantiate(bullet);
-        bul.shooter = this;
-        bul.transform.position = transform.position + transform.forward * 1.3f + transform.up;
-        bul.transform.forward = transform.forward;
-        bullets--;
-        sideStepDirection = Direction();
-        canShoot = false;
-
-        yield return new WaitForSeconds(1);
-        canShoot = true;
-        
-    }
 
     public void SideStep(int direction)
     {
         transform.position += (transform.right * direction) * speed * Time.deltaTime ;
         if(Vector3.Distance(target.position, transform.position) > range/1.5f)transform.position += (target.position - transform.position).normalized * speed * Time.deltaTime;
     }
-
     public int Direction()
     {
         if (UnityEngine.Random.value > 0.5f)
