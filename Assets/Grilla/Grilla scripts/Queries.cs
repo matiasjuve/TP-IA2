@@ -11,6 +11,7 @@ public class Queries : MonoBehaviour
     public float height = 30f;
     public IEnumerable<GridEntity> selected = new List<GridEntity>();
 
+
     public IEnumerable<GridEntity> Query()
     {
         if (isBox)

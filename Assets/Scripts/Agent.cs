@@ -27,6 +27,7 @@ public class Agent : MonoBehaviour
     public int angle;
     public LayerMask visibles;
     public Transform target = null;
+    public Queries query;
     private List<Transform> enemysOnRange = new List<Transform>();
     public List<Transform> spawnPoints;
 
@@ -39,7 +40,11 @@ public class Agent : MonoBehaviour
 
     private int sideStepDirection;
 
-    public IEnumerable<GridEntity> path;
+
+    // COSAS PARA DIJKSTRA
+    public List<GridEntity> path;
+    GridEntity start;
+    public GridEntity finalNode;
 
     private void Start()
     {
@@ -48,6 +53,7 @@ public class Agent : MonoBehaviour
         bullets = charger;
         life = maxLife;
         search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
+        //finalNode = query.Query().ToList()[UnityEngine.Random.Range(0, query.Query().Count())];
         //LevelManager.Instance.players.Add(this);
         //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
 
@@ -84,26 +90,43 @@ public class Agent : MonoBehaviour
         //Move
         move.OnEnter += x =>
         {
-            //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
-            search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
+            start = GetFirst();
+            finalNode = GetLast();
+            
+            //search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
         };
         move.OnUpdate += () =>
         {
             if (life > 0 && target != null) SendInputToFSM(Conditions.SHOOT);
             else if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
 
-            if (Vector3.Distance(search, transform.position) > 2f)
+
+            path = AStar.Run(start,IsFinalNode, Expand, Heuristic);
+            Debug.Log("El nodo al que quiero ir es  " + finalNode.ToString());
+            foreach (var item in path)
+            {
+                Debug.Log(item.name);
+            }
+
+            for (int i = 0; i < path.Count(); i++)
+            {
+                if (Vector3.Distance(transform.position, path[i].transform.position) > 0.5f)
+                {
+                    transform.position += (path[i].transform.position - transform.position).normalized * speed * Time.deltaTime;
+                    transform.forward = (path[i].transform.position - transform.position).normalized;
+                }
+            }
+           
+            
+            /*if (Vector3.Distance(search, transform.position) > 2f)
             {
                 transform.position += (search - transform.position).normalized * speed * Time.deltaTime;
                 transform.forward = Vector3.Lerp(transform.forward,(search - transform.position).normalized, 0.1f);
             }
             else
             {
-                //search = SpawnPoints.Instance.spawnPoints[Random.Range(0, SpawnPoints.Instance.spawnPoints.Count - 1)].position;
                 search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
-            }
-            
-            //CODIGO DE MOVIMIENTO.
+            }*/
         };
 
         //Shoot
@@ -176,6 +199,40 @@ public class Agent : MonoBehaviour
 
         //con todo ya creado, creo la FSM y le asigno el primer estado
         _myFsm = new EventFSM<Conditions>(move);
+    }
+
+    public GridEntity GetFirst()
+    {
+        var nodes = query.Query();
+        return nodes.OrderBy(x => Vector3.Distance(transform.position, x.transform.position)).FirstOrDefault();
+    }
+
+    public GridEntity GetLast()
+    {
+        var nodes = query.Query();
+        return nodes.OrderBy(x => Vector3.Distance(finalNode.transform.position, x.transform.position)).FirstOrDefault();
+    }
+
+    public bool IsFinalNode(GridEntity n)
+    {
+        if (n == finalNode) return true;
+
+        return false;
+    }
+
+    public Dictionary<GridEntity, float> Expand(GridEntity node)
+    {
+        var dictionary = new Dictionary<GridEntity, float>();
+        foreach (var item in node.neighbours)
+        {
+            if (!dictionary.ContainsKey(item)) dictionary.Add(item, 1);
+        }
+        return dictionary;
+    }
+
+    float Heuristic(GridEntity node)
+    {
+        return Vector3.Distance(node.transform.position, finalNode.transform.position);
     }
 
     public IEnumerator Recharge()
