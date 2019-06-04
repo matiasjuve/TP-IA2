@@ -39,6 +39,8 @@ public class Agent : MonoBehaviour
 
     private int sideStepDirection;
 
+    public IEnumerable<GridEntity> path;
+
     private void Start()
     {
         _myRb = gameObject.GetComponent<Rigidbody>();
