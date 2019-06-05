@@ -16,7 +16,7 @@ public class Agent : MonoBehaviour
     public int charger;
     public int maxLife;
     public float speed;
-    private int life;
+    public int life;
     public int kills = 0;
     public int Deaths = 0;
     public int bullets;
@@ -27,6 +27,7 @@ public class Agent : MonoBehaviour
     public int angle;
     public LayerMask visibles;
     public Transform target = null;
+    public List<GridEntity> grid;
     public Queries query;
     private List<Transform> enemysOnRange = new List<Transform>();
     public List<Transform> spawnPoints;
@@ -45,9 +46,11 @@ public class Agent : MonoBehaviour
     public List<GridEntity> path;
     GridEntity start;
     public GridEntity finalNode;
+    public int currentIndex;
 
     private void Start()
     {
+        grid = GameObject.FindObjectsOfType<GridEntity>().ToList();
         _myRb = gameObject.GetComponent<Rigidbody>();
         DisplayName(user);
         bullets = charger;
@@ -90,8 +93,9 @@ public class Agent : MonoBehaviour
         //Move
         move.OnEnter += x =>
         {
+            path = new List<GridEntity>();
             start = GetFirst();
-            finalNode = GetLast();
+            finalNode = grid[UnityEngine.Random.Range(0, grid.Count - 1)];
             
             //search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
         };
@@ -102,31 +106,9 @@ public class Agent : MonoBehaviour
 
 
             path = AStar.Run(start,IsFinalNode, Expand, Heuristic);
-            Debug.Log("El nodo al que quiero ir es  " + finalNode.ToString());
-            foreach (var item in path)
-            {
-                Debug.Log(item.name);
-            }
 
-            for (int i = 0; i < path.Count(); i++)
-            {
-                if (Vector3.Distance(transform.position, path[i].transform.position) > 0.5f)
-                {
-                    transform.position += (path[i].transform.position - transform.position).normalized * speed * Time.deltaTime;
-                    transform.forward = (path[i].transform.position - transform.position).normalized;
-                }
-            }
-           
-            
-            /*if (Vector3.Distance(search, transform.position) > 2f)
-            {
-                transform.position += (search - transform.position).normalized * speed * Time.deltaTime;
-                transform.forward = Vector3.Lerp(transform.forward,(search - transform.position).normalized, 0.1f);
-            }
-            else
-            {
-                search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
-            }*/
+
+            Move();
         };
 
         //Shoot
@@ -199,6 +181,26 @@ public class Agent : MonoBehaviour
 
         //con todo ya creado, creo la FSM y le asigno el primer estado
         _myFsm = new EventFSM<Conditions>(move);
+    }
+
+    public void Move()
+    {
+        var current = path[currentIndex];
+        transform.position += (current.transform.position - transform.position).normalized * speed * Time.deltaTime;
+        //transform.forward = (current.transform.position - transform.position).normalized;
+        transform.forward = Vector3.Lerp(transform.forward, (current.transform.position - transform.position).normalized, 0.1f);
+
+        if (Vector3.Distance(transform.position, current.transform.position) < 0.5f)
+        {
+            currentIndex++;
+            if (currentIndex == path.Count)
+            {
+                path = new List<GridEntity>();
+                finalNode = grid[UnityEngine.Random.Range(0, grid.Count - 1)];
+                start = GetFirst();
+                currentIndex = 0;
+            }
+        }
     }
 
     public GridEntity GetFirst()
@@ -278,7 +280,6 @@ public class Agent : MonoBehaviour
     private void Update()
     {
         _myFsm.Update();
-
         CheckTarget();
         
     }
