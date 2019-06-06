@@ -26,7 +26,7 @@ public class Agent : MonoBehaviour
     public float range;
     public int angle;
     public LayerMask visibles;
-    public Transform target = null;
+    public Transform target;
     public List<GridEntity> grid;
     public Queries query;
     private List<Transform> enemysOnRange = new List<Transform>();
@@ -268,7 +268,7 @@ public class Agent : MonoBehaviour
             target = null;
             return;
         }
-
+        if(SetTarget(enemysOnRange) != null && target == null)
         target = SetTarget(enemysOnRange);
     }
 
