@@ -26,6 +26,9 @@ public class LevelManager : MonoBehaviour
     public Tuple<string, float> kdaTuple = Tuple.Create("", 0f);
     public List<string> names;
 
+
+    private bool activated;
+
     void Start()
     {
         players = GameObject.FindObjectsOfType<Agent>().ToList();
@@ -44,13 +47,14 @@ public class LevelManager : MonoBehaviour
         timerMinutes.text = minutes;
         timerSeconds.text = seconds;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (gameTime <= 0 && !activated)
         {
             stats.SetActive(true);
             timer.SetActive(false);
             GetTop3();
             GetKds();
             GetKillList();
+            activated = true;
         }
     }
 

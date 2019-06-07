@@ -31,6 +31,7 @@ public class Agent : MonoBehaviour
     public Queries query;
     private List<Transform> enemysOnRange = new List<Transform>();
     public List<Transform> spawnPoints;
+    public SpatialGrid spatialGrid;
 
     public List<Tuple<string, Agent>> victims = new List<Tuple<string, Agent>>();
 
@@ -50,6 +51,14 @@ public class Agent : MonoBehaviour
 
     private void Start()
     {
+        spatialGrid = GameObject.Find("Grid").GetComponent<SpatialGrid>();
+        var g = new GameObject();
+        query = g.AddComponent<Queries>();
+        query.targetGrid = spatialGrid;
+        query.transform.position = transform.position;
+        query.transform.parent = transform;
+
+        spawnPoints = GameObject.FindGameObjectsWithTag("Spawn").Select(x => x.transform).ToList();
         grid = GameObject.FindObjectsOfType<GridEntity>().ToList();
         _myRb = gameObject.GetComponent<Rigidbody>();
         DisplayName(user);
@@ -186,6 +195,7 @@ public class Agent : MonoBehaviour
 
     public void Move()
     {
+        if (path == null) path = AStar.Run(start = GetFirst(), IsFinalNode, Expand, Heuristic);
         var current = path[currentIndex];
         transform.position += (current.transform.position - transform.position).normalized * speed * Time.deltaTime;
         transform.forward = Vector3.Lerp(transform.forward, (current.transform.position - transform.position).normalized, 0.1f);
@@ -263,11 +273,11 @@ public class Agent : MonoBehaviour
     }
     private void CheckTarget()
     {
-        if (target != null && !IsInSight(target))
+        /*if (target != null && !IsInSight(target))
         {
             target = null;
-        }
-        if(SetTarget(enemysOnRange) != null && target == null)
+        }*/
+        if(target == null)
         target = SetTarget(enemysOnRange);
     }
 
@@ -366,10 +376,12 @@ public class Agent : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject != gameObject && other.gameObject.layer == 8)
-        {
-            enemysOnRange.Add(other.transform);
-        }
+
+
+            if (other.gameObject.GetComponent<Agent>() != this && other.gameObject.layer == 8)
+            {
+                enemysOnRange.Add(other.transform);
+            }
     }
 
     public void OnTriggerExit(Collider other)
@@ -388,6 +400,7 @@ public class Agent : MonoBehaviour
             if (life <= 0)
             {
                 collision.gameObject.GetComponent<Bullet>().shooter.kills++;
+                //collision.gameObject.GetComponent<Bullet>().shooter.target = null;
                 collision.gameObject.GetComponent<Bullet>().shooter.victims.Add(Tuple.Create(collision.gameObject.GetComponent<Bullet>().shooter.user, this));
             }
             Destroy(collision.gameObject);
