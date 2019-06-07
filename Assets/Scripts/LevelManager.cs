@@ -28,9 +28,10 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
+        players = GameObject.FindObjectsOfType<Agent>().ToList();
         top3.text = "";
         kda.text = "";
-        victims.text = "";  
+        victims.text = "";
     }
 
     void Update()
@@ -47,17 +48,6 @@ public class LevelManager : MonoBehaviour
         {
             stats.SetActive(true);
             timer.SetActive(false);
-
-
-            /*foreach (var item in GetTop3())
-            {
-                Debug.Log(item.Item1 + "" + item.Item2);
-            }*/
-            //names = GetTop3()
-        }
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
             GetTop3();
             GetKds();
             GetKillList();
@@ -73,7 +63,7 @@ public class LevelManager : MonoBehaviour
 
         foreach (var item in Top3PlayerWithMostKills)
         {
-            top3.text +=item.Item1 + "    " + item.Item2.ToString() + "\r\n";
+            top3.text += item.Item1 + "    " + item.Item2.ToString() + "\r\n";
             top3killers.Add(item);
         }
     }
@@ -107,11 +97,11 @@ public class LevelManager : MonoBehaviour
         {
             var victimsList = players.Select(x => x.victims).SelectMany(x => x).Where(x => x.Item1 == top3killers.First().Item1);
 
-            victims.text += victimsList.First().Item1 + "Killed These Players"  +  " /r/n";
+            victims.text += victimsList.First().Item1 + "\r\n" + "Killed These Players" + "\r\n";
 
             foreach (var item in victimsList)
             {
-                victims.text += item.Item2.user + " /r/n";
+                victims.text += item.Item2.user + "\r\n";
             }
         }
     }

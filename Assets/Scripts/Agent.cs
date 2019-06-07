@@ -93,22 +93,23 @@ public class Agent : MonoBehaviour
         //Move
         move.OnEnter += x =>
         {
-            path = new List<GridEntity>();
+            target = null;
+            //path = null;
             start = GetFirst();
             finalNode = grid[UnityEngine.Random.Range(0, grid.Count - 1)];
-            
-            //search = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count - 1)].position;
         };
         move.OnUpdate += () =>
         {
+            path = AStar.Run(start,IsFinalNode, Expand, Heuristic);
+            Move();
             if (life > 0 && target != null) SendInputToFSM(Conditions.SHOOT);
             else if (life <= 0) SendInputToFSM(Conditions.RESPAWN);
 
+        };
 
-            path = AStar.Run(start,IsFinalNode, Expand, Heuristic);
-
-
-            Move();
+        move.OnExit += x => 
+        {
+            currentIndex = 0;
         };
 
         //Shoot
@@ -187,7 +188,6 @@ public class Agent : MonoBehaviour
     {
         var current = path[currentIndex];
         transform.position += (current.transform.position - transform.position).normalized * speed * Time.deltaTime;
-        //transform.forward = (current.transform.position - transform.position).normalized;
         transform.forward = Vector3.Lerp(transform.forward, (current.transform.position - transform.position).normalized, 0.1f);
 
         if (Vector3.Distance(transform.position, current.transform.position) < 0.5f)
@@ -266,7 +266,6 @@ public class Agent : MonoBehaviour
         if (target != null && !IsInSight(target))
         {
             target = null;
-            return;
         }
         if(SetTarget(enemysOnRange) != null && target == null)
         target = SetTarget(enemysOnRange);
@@ -383,7 +382,7 @@ public class Agent : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == 9)
+        if (collision.gameObject.layer == 9 && collision.gameObject.GetComponent<Bullet>().shooter != this)
         {
             TakeDamage(collision.gameObject.GetComponent<Bullet>().damage);
             if (life <= 0)
